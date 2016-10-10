@@ -13,6 +13,22 @@ add_action('admin_menu', 'noxsleepdrink_plugin_setup_menu');
 //Wordpress On plugin activation hook
 register_activation_hook( __FILE__, 'noxsleepdrink_plugin_db_install' );
 
+//Wordpress hook for adding Bootstrap
+add_action( 'admin_enqueue_scripts', 'loadBootstrap' );
+
+
+/*
+ * Function Name: loadBootstrap
+ * Description: Used to load bootstrap classes for view
+ */
+
+function loadBootstrap() {
+    wp_register_script( 'bootstrap-js', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.js' );
+    wp_register_style( 'bootstrap-css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css' );
+    wp_enqueue_script( 'bootstrap-js' );
+    wp_enqueue_style( 'bootstrap-css' );
+}
+
 
 global $jal_db_version;
 $jal_db_version = '1.0';
@@ -61,7 +77,25 @@ function noxsleepdrink_plugin_setup_menu(){
  */
 
 function noxsleepdrink_plugin_init(){
-    echo "<h1>Hello  Noxsleepdrink Plugin!</h1>";
+
+	$html = 
+	'<div class="col-md-12">
+		<h4>Filter Your Products</h4>
+	</div>	
+	<div class="form-group col-md-4">
+
+      <select multiple class=" form-control" id="sel2">
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+      </select>
+    </div> 
+    <div class="clearfix"></div>
+    <div class="col-md-4"> <button type="button" class="btn btn-primary">Save</button> </div>
+    ';
+    echo $html ;
 }
  
 ?>
