@@ -32,7 +32,6 @@ function noxsleepdrink_plugin_db_install() {
 	$sql = "CREATE TABLE $table_name (
 		id mediumint(9) NOT NULL AUTO_INCREMENT,
 		product_id int NOT NULL,
-		product_name text NOT NULL,
 		PRIMARY KEY  (id)
 	) $charset_collate;";
 
@@ -105,5 +104,4 @@ function noxsleepdrink_plugin_view () {
     return  $html ;
 
 }
-
 ?> 
