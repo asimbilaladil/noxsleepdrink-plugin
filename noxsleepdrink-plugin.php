@@ -71,31 +71,69 @@ function noxsleepdrink_plugin_setup_menu(){
     add_menu_page( 'Noxsleepdrink Plugin', 'Noxsleepdrink Plugin', 'manage_options', 'noxsleepdrink-plugin', 'noxsleepdrink_plugin_init' );
 }
  
+ function get_title() {
+ 	$products = array();
+   	$args = array( 'post_type' => 'product' );
+
+   	$loop = new WP_Query( $args );
+
+    while ( $loop->have_posts() ) : $loop->the_post(); 
+    global $product; 
+
+    $data['product_id'] = $product->id;
+ 	$data['product_title'] = get_the_title();
+
+ 	array_push($products , $data);
+    endwhile; 
+    wp_reset_query();   
+
+    return $products;
+}
+
+/*
+ * Function Name: Noxsleepdrink  Plugin View
+ * Description: Create Noxsleepdrink Plugin HTML view function
+ */
+
+function noxsleepdrink_plugin_view () {
+
+	//Get products data array 
+	$products = get_title();
+	
+	$html = '<div class="col-md-12">
+		<h4>Filter Your Products</h4>
+	</div>	
+	<div class="form-group col-md-4">
+
+      <select multiple class=" form-control" id="sel2">' ;
+
+    foreach ($products as $key => $item) {
+
+        	$html_option = $html_option . '<option value=" '.$item['product_id']  .'">'. $item['product_title'] .'</option>';
+        }    
+    
+
+    $html = $html .$html_option .  '</select>
+    </div> 
+    <div class="clearfix"></div>
+    <div class="col-md-4"> <button type="button" class="btn btn-primary">Save</button> </div>
+    ';
+
+    return  $html ;
+
+}
+
+
 /*
  * Function Name: Noxsleepdrink Plugin Init
  * Description: Noxsleepdrink Plugin initialization function
  */
 
 function noxsleepdrink_plugin_init(){
-
-	$html = 
-	'<div class="col-md-12">
-		<h4>Filter Your Products</h4>
-	</div>	
-	<div class="form-group col-md-4">
-
-      <select multiple class=" form-control" id="sel2">
-        <option>1</option>
-        <option>2</option>
-        <option>3</option>
-        <option>4</option>
-        <option>5</option>
-      </select>
-    </div> 
-    <div class="clearfix"></div>
-    <div class="col-md-4"> <button type="button" class="btn btn-primary">Save</button> </div>
-    ';
-    echo $html ;
+	
+	$html_view = noxsleepdrink_plugin_view();
+	echo $html_view;
+    
 }
  
 ?>
