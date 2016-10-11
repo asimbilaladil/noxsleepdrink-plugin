@@ -22,23 +22,23 @@ $jal_db_version = '1.0';
 
 function noxsleepdrink_plugin_db_install() {
 
-	global $wpdb;
-	global $jal_db_version;
+    global $wpdb;
+    global $jal_db_version;
 
-	$table_name = $wpdb->prefix . 'productRecords';
-	
-	$charset_collate = $wpdb->get_charset_collate();
+    $table_name = $wpdb->prefix . 'productRecords';
+    
+    $charset_collate = $wpdb->get_charset_collate();
 
-	$sql = "CREATE TABLE $table_name (
-		id mediumint(9) NOT NULL AUTO_INCREMENT,
-		product_id int NOT NULL,
-		PRIMARY KEY  (id)
-	) $charset_collate;";
+    $sql = "CREATE TABLE $table_name (
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        product_id int NOT NULL,
+        PRIMARY KEY  (id)
+    ) $charset_collate;";
 
-	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-	dbDelta( $sql );
+    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    dbDelta( $sql );
 
-	add_option( 'jal_db_version', $jal_db_version );
+    add_option( 'jal_db_version', $jal_db_version );
 
 }
 
@@ -53,18 +53,18 @@ function noxsleepdrink_plugin_setup_menu(){
 
  
 function get_title() {
- 	$products = array();
-   	$args = array( 'post_type' => 'product' );
+    $products = array();
+    $args = array( 'post_type' => 'product' );
 
-   	$loop = new WP_Query( $args );
+    $loop = new WP_Query( $args );
 
     while ( $loop->have_posts() ) : $loop->the_post(); 
     global $product; 
 
     $data['product_id'] = $product->id;
- 	$data['product_title'] = get_the_title();
+    $data['product_title'] = get_the_title();
 
- 	array_push($products , $data);
+    array_push($products , $data);
     endwhile; 
     wp_reset_query();   
 
@@ -76,30 +76,25 @@ function get_title() {
  * Function Name: Noxsleepdrink  Plugin View
  * Description: Create Noxsleepdrink Plugin HTML view function
  */
-
 function noxsleepdrink_plugin_view () {
 
-	//Get products data array 
-	$products = get_title();
-	
-	$html = '<div class="col-md-12">
-		<h4>Filter Your Products</h4>
-	</div>	
-	<div class="form-group col-md-4">
-
-      <select multiple class=" form-control" id="sel2">' ;
-
-    foreach ($products as $key => $item) {
-
-        	$html_option = $html_option . '<option value=" '.$item['product_id']  .'">'. $item['product_title'] .'</option>';
-        }    
+    //Get products data array 
+    $products = get_title();
     
+    $html = '<form action="'. get_admin_url() .'admin-post.php" method="POST">';
+    $html = $html . '<div class="col-md-12"> <h4>Filter Your Products</h4> </div> <div class="form-group col-md-4">';
+    $html = $html . '<table class="table"> <tr> <td> Product </td> <td> Action </td> </tr>';
 
-    $html = $html .$html_option .  '</select>
-    </div> 
-    <div class="clearfix"></div>
-    <div class="col-md-4"> <button type="button" class="btn btn-primary">Save</button> </div>
-    ';
+    foreach ($products as $product) {
+        $html = $html . ' <tr> <td> '. $product['product_title'] .' </td>'; 
+        $html = $html . '<td> <input type="checkbox" value="'. $product['product_id'] .'" name="product_'. $product['product_id'] .'"> Add </input> </td> </tr>';
+    }
+
+    $html = $html . '</table>
+        </div> 
+        <div class="clearfix"></div>
+        <div class="col-md-4"> <input type="submit" class="btn btn-primary" value="Save"/> </div>
+        </form>';
 
     return  $html ;
 
