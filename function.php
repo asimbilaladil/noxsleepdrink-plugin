@@ -51,8 +51,12 @@ function noxsleepdrink_plugin_setup_menu(){
     add_menu_page( 'Noxsleepdrink Plugin', 'Noxsleepdrink Plugin', 'manage_options', 'noxsleepdrink-plugin', 'noxsleepdrink_plugin_init' );
 }
 
+/*
+ * Function Name: Get Products
+ * Description: get all woo commerce products and id 
+ */
  
-function get_title() {
+function get_products() {
     $products = array();
     $args = array( 'post_type' => 'product' );
 
@@ -71,6 +75,14 @@ function get_title() {
     return $products;
 }
 
+/*
+ * Function Name: Post Product
+ * Description: get forms parameters on admin-post page
+ */
+
+function post_product(){
+    print_r($_POST);
+} 
 
 /*
  * Function Name: Noxsleepdrink  Plugin View
@@ -79,7 +91,7 @@ function get_title() {
 function noxsleepdrink_plugin_view () {
 
     //Get products data array 
-    $products = get_title();
+    $products = get_products();
     
     $html = '<form action="'. get_admin_url() .'admin-post.php" method="POST">';
     $html = $html . '<div class="col-md-12"> <h4>Filter Your Products</h4> </div> <div class="form-group col-md-4">';
@@ -94,6 +106,8 @@ function noxsleepdrink_plugin_view () {
         </div> 
         <div class="clearfix"></div>
         <div class="col-md-4"> <input type="submit" class="btn btn-primary" value="Save"/> </div>
+        <input name="action" type="hidden" value="products">
+
         </form>';
 
     return  $html ;

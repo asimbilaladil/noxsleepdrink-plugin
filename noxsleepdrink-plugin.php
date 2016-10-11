@@ -23,6 +23,10 @@ add_action( 'admin_enqueue_scripts', 'loadBootstrap' );
 
 add_action( 'admin_post_nopriv_add_foobar', 'prefix_admin_add_foobar' );
 
+//Wordpress hook for post action call post_product function to get all form data
+add_action('admin_post_products','post_product');
+
+
 /*
  * Function Name: Noxsleepdrink Plugin Init
  * Description: Noxsleepdrink Plugin initialization function
