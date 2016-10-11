@@ -20,9 +20,11 @@ register_activation_hook( __FILE__, 'noxsleepdrink_plugin_db_install' );
 //Wordpress hook for adding Bootstrap
 add_action( 'admin_enqueue_scripts', 'loadBootstrap' );
 
-
 //Wordpress hook for post action call post_product function to get all form data
 add_action('admin_post_products','post_product');
+
+// hook to notify plugin function whenever order is created
+add_action( 'woocommerce_checkout_order_processed', 'order_notify',  10, 1  );
 
 
 /*

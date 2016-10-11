@@ -100,8 +100,9 @@ function post_product(){
 
 }
 
-/**
- * Get selected products from productrecord table
+/*
+ * Function Name: Get Selected Product
+ * Description: Get selected products from productrecord table
  */
 function getSelectedProduct() {
 
@@ -114,6 +115,54 @@ function getSelectedProduct() {
     }
 
     return $products;
+}
+
+/*
+ * Function Name: Order Notify
+ * Description: Get order details from order id
+ */
+
+function order_notify($order_id){
+    
+    $order = new WC_Order( $order_id );
+    $items = $order->get_items();
+    foreach ( $items as $item ) {
+
+        $product_name = $item['name'];
+        $product_id = $item['product_id'];
+        $count = $item['qty'];
+
+    }
+    $myuser_id = (int)$order->user_id;
+    $user_info = get_userdata($myuser_id);
+    $items = $order->get_items();
+    $first_name = $order->billing_first_name;
+    $last_name = $order->billing_last_name;
+    $email = $order->billing_email;
+    $postcode = $order->billing_postcode;
+    $phone = $order->billing_phone;
+    $street = $order->shipping_address_1 . " " . $order->shipping_address_2;
+    $country = $order->shipping_country;
+    $state = $order->shipping_state;
+    $city = $order->shipping_city;
+    $phone = $order->billing_phone;
+    $comment = $order->customer_note;
+
+    $product_items = array(
+        "name"=> $product_name,
+        "count"=>$count
+    ); 
+
+    $recipient = array (
+        "name" => $first_name . " " . $last_name,
+        "street"=> $street ,
+        "city"=> $city,
+        "zip"=> $postcode,
+        "country"=>$country,
+        "phone"=>$phone ,
+        "email"=>$email
+    );
+ 
 }
 
 /*
