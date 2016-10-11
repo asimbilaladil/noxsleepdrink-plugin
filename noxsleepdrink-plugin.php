@@ -8,6 +8,9 @@ Version: 1
 */
 require('function.php');
 
+//This hook allows you to create custom handlers for your own custom GET and POST requests.
+add_action( 'admin_post_add_foobar', 'prefix_admin_add_foobar' );
+
 //Wordpress Add menu hook
 add_action('admin_menu', 'noxsleepdrink_plugin_setup_menu');
 
@@ -18,7 +21,7 @@ register_activation_hook( __FILE__, 'noxsleepdrink_plugin_db_install' );
 add_action( 'admin_enqueue_scripts', 'loadBootstrap' );
 
 
-
+add_action( 'admin_post_nopriv_add_foobar', 'prefix_admin_add_foobar' );
 
 /*
  * Function Name: Noxsleepdrink Plugin Init
@@ -26,10 +29,15 @@ add_action( 'admin_enqueue_scripts', 'loadBootstrap' );
  */
 
 function noxsleepdrink_plugin_init(){
-	
-	$html_view = noxsleepdrink_plugin_view();
-	echo $html_view;
     
+    $html_view = noxsleepdrink_plugin_view();
+    echo $html_view;
+    
+}
+
+function prefix_admin_add_foobar() {
+    status_header(200);
+    die("Server received '{$_REQUEST['data']}' from your browser.");
 }
  
 ?>
