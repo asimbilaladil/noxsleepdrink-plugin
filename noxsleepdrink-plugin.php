@@ -21,8 +21,6 @@ register_activation_hook( __FILE__, 'noxsleepdrink_plugin_db_install' );
 add_action( 'admin_enqueue_scripts', 'loadBootstrap' );
 
 
-add_action( 'admin_post_nopriv_add_foobar', 'prefix_admin_add_foobar' );
-
 //Wordpress hook for post action call post_product function to get all form data
 add_action('admin_post_products','post_product');
 
@@ -39,9 +37,4 @@ function noxsleepdrink_plugin_init(){
     
 }
 
-function prefix_admin_add_foobar() {
-    status_header(200);
-    die("Server received '{$_REQUEST['data']}' from your browser.");
-}
- 
 ?>
