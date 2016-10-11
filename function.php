@@ -152,12 +152,12 @@ function noxsleepdrink_plugin_view () {
     $products = get_products();
     
     $html = '<form action="'. get_admin_url() .'admin-post.php" method="POST">';
-    $html = $html . '<div class="col-md-12"> <h4>Filter Your Products</h4> </div> <div class="form-group col-md-4">';
-    $html = $html . '<table class="table"> <tr> <td> Product </td> <td> Action </td> </tr>';
+    $html = $html . '<div class="col-md-12"> <h4>Filter Your Products</h4> </div> <div class="form-group col-md-10">';
+    $html = $html . '<table class="table"> <tr> <td> # </td> <td> Product </td> <td> Action </td> </tr>';
 
-    foreach ($products as $product) {
-        $html = $html . ' <tr> <td> '. $product['product_title'] .' </td>'; 
-        $html = $html . '<td> <input type="checkbox" value="'. $product['product_id'] .'" name="product[]" '. (in_array($product['product_id'], $selectedProducts) ? 'checked' : '') .'> Add </input> </td> </tr>';
+    foreach ($products as $key => $product) {
+        $html = $html . ' <tr> <td> '. $key .' </td> <td> '. $product['product_title'] .' </td>'; 
+        $html = $html . '<td> <input type="checkbox" value="'. $product['product_id'] .'" name="product[]" '. (in_array($product['product_id'], $selectedProducts) ? 'checked' : '') .'>  </input> </td> </tr>';
     }
 
     $html = $html . '</table>
@@ -193,7 +193,7 @@ function curlRequest($order, $item) {
 
     $data = array (
       'type' => 'drop',
-      'comment' => '',
+      'comment' => $comment,
       'tracking_number' => '',
       'reference' => '',
       'due_dates' => 
@@ -208,7 +208,7 @@ function curlRequest($order, $item) {
         0 => 
         array (
           'name' => $item['name'],
-          'count' => $item['qty']
+          'count' => intval( $item['qty'] )
         )
       ),
       'recipient' => 
@@ -234,7 +234,9 @@ function curlRequest($order, $item) {
     curl_setopt($curlRequest, CURLOPT_RETURNTRANSFER, true);                                                                      
     curl_setopt($curlRequest, CURLOPT_HTTPHEADER, array(                                                                          
         'Content-Type: application/json',                                                                                
-        'Authorization:' . 'EuedpwF4MujB6OKhJugKYyyUhmWoUG915eUzPn77cQEEVQBHtL'                                                          
+        'Authorization:' . 'EuedpwF4MujB6OKhJugKYyyUhmWoUG915eUzPn77cQEEVQBHtL'
+        ,                                                                                
+        'Content-Length: ' . strlen($data_string)                                                         
     ));                                                                                                                   
 
     // Post API Response                                                                                                                     
