@@ -123,46 +123,21 @@ function getSelectedProduct() {
  */
 
 function order_notify($order_id){
-    
+
+    global $wpdb;
     $order = new WC_Order( $order_id );
     $items = $order->get_items();
+
     foreach ( $items as $item ) {
 
-        $product_name = $item['name'];
-        $product_id = $item['product_id'];
-        $count = $item['qty'];
+        $results = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."productrecords where product_id=" . $item['product_id']);
 
-    }
-    $myuser_id = (int)$order->user_id;
-    $user_info = get_userdata($myuser_id);
-    $items = $order->get_items();
-    $first_name = $order->billing_first_name;
-    $last_name = $order->billing_last_name;
-    $email = $order->billing_email;
-    $postcode = $order->billing_postcode;
-    $phone = $order->billing_phone;
-    $street = $order->shipping_address_1 . " " . $order->shipping_address_2;
-    $country = $order->shipping_country;
-    $state = $order->shipping_state;
-    $city = $order->shipping_city;
-    $phone = $order->billing_phone;
-    $comment = $order->customer_note;
+        //check if product exist in filter
+        if ($results) {
+            curlRequest($order, $item);
+        }
 
-    $product_items = array(
-        "name"=> $product_name,
-        "count"=>$count
-    ); 
-
-    $recipient = array (
-        "name" => $first_name . " " . $last_name,
-        "street"=> $street ,
-        "city"=> $city,
-        "zip"=> $postcode,
-        "country"=>$country,
-        "phone"=>$phone ,
-        "email"=>$email
-    );
- 
+    } 
 }
 
 /*
@@ -196,4 +171,77 @@ function noxsleepdrink_plugin_view () {
     return  $html ;
 
 }
+
+/**
+ * Curl request to API
+ * @param $order 
+ * @param $item
+ */
+function curlRequest($order, $item) {
+
+    $first_name = $order->billing_first_name;
+    $last_name = $order->billing_last_name;
+    $email = $order->billing_email;
+    $postcode = $order->billing_postcode;
+    $phone = $order->billing_phone;
+    $street = $order->shipping_address_1 . " " . $order->shipping_address_2;
+    $country = $order->shipping_country;
+    $state = $order->shipping_state;
+    $city = $order->shipping_city;
+    $phone = $order->billing_phone;
+    $comment = $order->customer_note;
+
+    $data = array (
+      'type' => 'drop',
+      'comment' => '',
+      'tracking_number' => '',
+      'reference' => '',
+      'due_dates' => 
+      array (
+        0 => 
+        array (
+          'date' => '2015-05-14'
+        )
+      ),
+      'items' => 
+      array (
+        0 => 
+        array (
+          'name' => $item['name'],
+          'count' => $item['qty']
+        )
+      ),
+      'recipient' => 
+      array (
+        'name' => $first_name . " " . $last_name,
+        'street' => $street ,
+        'city' => $city,
+        'zip' => $postcode,
+        'country' => $country,
+        'phone' => $phone,
+        'email' => $email,
+      ),
+    );
+
+    $data_string = json_encode($data);
+
+    error_log($data_string);
+
+    //php Curl Request to post data to CRM                                                                                                                                                                                           
+    $curlRequest = curl_init('https://staging.bubblepost.be/v0.2/deliveries');                                                                      
+    curl_setopt($curlRequest, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
+    curl_setopt($curlRequest, CURLOPT_POSTFIELDS, $data_string);                                                                  
+    curl_setopt($curlRequest, CURLOPT_RETURNTRANSFER, true);                                                                      
+    curl_setopt($curlRequest, CURLOPT_HTTPHEADER, array(                                                                          
+        'Content-Type: application/json',                                                                                
+        'Authorization:' . 'EuedpwF4MujB6OKhJugKYyyUhmWoUG915eUzPn77cQEEVQBHtL'                                                          
+    ));                                                                                                                   
+
+    // Post API Response                                                                                                                     
+    $result = curl_exec($curlRequest);
+
+    error_log(json_encode($result)) ;
+
+}
+
 ?> 
