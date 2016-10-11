@@ -226,16 +226,14 @@ function curlRequest($order, $products) {
 
     $data_string = json_encode($data);
 
-    error_log($data_string);
-
-    //php Curl Request to post data to CRM                                                                                                                                                                                           
-    $curlRequest = curl_init('https://staging.bubblepost.be/v0.2/deliveries');                                                                      
+    //php Curl Request to post data to bubblepost                                                                                                                                                                                  
+    $curlRequest = curl_init('https://api.bubblepost.be/v0.2/deliveries');                                                                      
     curl_setopt($curlRequest, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
     curl_setopt($curlRequest, CURLOPT_POSTFIELDS, $data_string);                                                                  
     curl_setopt($curlRequest, CURLOPT_RETURNTRANSFER, true);                                                                      
     curl_setopt($curlRequest, CURLOPT_HTTPHEADER, array(                                                                          
         'Content-Type: application/json',                                                                                
-        'Authorization:' . 'EuedpwF4MujB6OKhJugKYyyUhmWoUG915eUzPn77cQEEVQBHtL'
+        'Authorization:' . 'R8NbmO2I1e9E9WzPBCTgtwSnqchn3dteRIir5YLp2maB39Azrj'
         ,                                                                                
         'Content-Length: ' . strlen($data_string)                                                         
     ));                                                                                                                   
