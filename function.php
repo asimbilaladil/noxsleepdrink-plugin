@@ -127,17 +127,25 @@ function order_notify($order_id){
     global $wpdb;
     $order = new WC_Order( $order_id );
     $items = $order->get_items();
+    $products = array();
 
     foreach ( $items as $item ) {
 
         $results = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."productrecords where product_id=" . $item['product_id']);
 
+        
+
         //check if product exist in filter
         if ($results) {
-            curlRequest($order, $item);
+            array_push($products, array('name' => $item['name'], 'count' => intval( $item['qty'] )));
         }
 
-    } 
+    }
+
+    if (count($products)) { 
+        curlRequest($order, $products);
+    }
+
 }
 
 /*
@@ -177,7 +185,7 @@ function noxsleepdrink_plugin_view () {
  * @param $order 
  * @param $item
  */
-function curlRequest($order, $item) {
+function curlRequest($order, $products) {
 
     $first_name = $order->billing_first_name;
     $last_name = $order->billing_last_name;
@@ -203,14 +211,7 @@ function curlRequest($order, $item) {
           'date' => '2015-05-14'
         )
       ),
-      'items' => 
-      array (
-        0 => 
-        array (
-          'name' => $item['name'],
-          'count' => intval( $item['qty'] )
-        )
-      ),
+      'items' => $products,
       'recipient' => 
       array (
         'name' => $first_name . " " . $last_name,
