@@ -81,14 +81,48 @@ function get_products() {
  */
 
 function post_product(){
-    print_r($_POST);
-} 
+
+    global $wpdb;
+
+    if (isset($_POST['product'])) {
+
+        $wpdb->query('TRUNCATE TABLE wp_productrecords');
+
+        $products = $_POST['product'];
+
+        foreach ($products as $product) {
+           $wpdb->insert( 'wp_productrecords', array( 'product_id' => $product ));
+        }
+    
+    }
+    
+    wp_redirect( admin_url( '?page=noxsleepdrink-plugin' ));
+
+}
+
+/**
+ * Get selected products from productrecord table
+ */
+function getSelectedProduct() {
+
+    global $wpdb;
+
+    $products = array();
+    $results = $wpdb->get_results("SELECT * FROM ".$wpdb->prefix."productrecords");
+    foreach ($results as $item) {
+        array_push($products, $item->product_id);
+    }
+
+    return $products;
+}
 
 /*
  * Function Name: Noxsleepdrink  Plugin View
  * Description: Create Noxsleepdrink Plugin HTML view function
  */
 function noxsleepdrink_plugin_view () {
+
+    $selectedProducts = getSelectedProduct();
 
     //Get products data array 
     $products = get_products();
@@ -99,7 +133,7 @@ function noxsleepdrink_plugin_view () {
 
     foreach ($products as $product) {
         $html = $html . ' <tr> <td> '. $product['product_title'] .' </td>'; 
-        $html = $html . '<td> <input type="checkbox" value="'. $product['product_id'] .'" name="product_'. $product['product_id'] .'"> Add </input> </td> </tr>';
+        $html = $html . '<td> <input type="checkbox" value="'. $product['product_id'] .'" name="product[]" '. (in_array($product['product_id'], $selectedProducts) ? 'checked' : '') .'> Add </input> </td> </tr>';
     }
 
     $html = $html . '</table>
